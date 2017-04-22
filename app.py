@@ -1,36 +1,24 @@
-import classes
-import objects as Object
+import socket
 
-loadedObjects = []
+# Constants for TCP socket
+TCP_IP = '127.0.0.1'
+TCP_PORT = 5555
+BUFFER_SIZE = 1024
 
+# Open the TCP socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((TCP_IP, TCP_PORT))
+s.listen(1)
 
-def findObject(name):
-  for obj in loadedObjects:
-    if obj.name == name:
-      return obj
-  return None
+while 1:
+    conn, addr = s.accept()
 
-while True:
-  read = input("> ").lower()
-  
-  # Allow the user to quit the app gracefully
-  if read == "exit":
-    break
-  
-  split = read.split()
-  action = split[0]
-  obj = None
-  
-  if len(split) >= 2:
-    obj = split[1]
-  
-  # Find the object in the room
-  if obj != None:
-    obj = findObject(obj)
-    
-  # Perform the action on the object
-  try:
-    getattr(obj, action)()
-  except AttributeError:
-    print("Cannot perform that action on that object")
-    continue
+    print('Connection from ', addr)
+
+    while 1:
+        data = conn.recv(BUFFER_SIZE).decode('utf-8')
+        if not data:
+            break
+        print('Received ', data)
+        conn.send(data.encode('utf-8'))  # Echo back
+    conn.close()
