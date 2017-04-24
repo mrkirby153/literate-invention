@@ -8,7 +8,15 @@ MESSAGE = "HELLO, WORLD!"
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((TCP_IP, TCP_PORT))
 
-s.send(MESSAGE.encode('utf-8'))
+s.send("PA$$W0RD!".encode('utf-8'))
+
+data = s.recv(BUFFER_SIZE).decode('utf-8')
+
+if not data == "ok":
+    print('Error: ', data)
+    exit(1)
+
+s.send("shutdown".encode('utf-8'))
 
 data = s.recv(BUFFER_SIZE).decode('utf-8')
 s.close()
