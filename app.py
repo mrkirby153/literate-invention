@@ -1,5 +1,6 @@
 import socket
 import config
+import subprocess
 
 # Constants for TCP socket
 BUFFER_SIZE = 1024
@@ -19,8 +20,6 @@ def send(data, response = False):
   else:
     return None
 
-
-
 def checkPassword(password):
   if not password:
     return False
@@ -32,16 +31,27 @@ def checkPassword(password):
   send('ok')
   return True
 
+def runCommand(command):
+  # Run command and capture output
+  output = subprocess.check_output(command.split(" ")).decode('utf-8')
+  if not output:
+    return "No Output"
+  else:
+    return output
 while 1:
     conn, addr = s.accept()
 
     print('Connection from ', addr)
-
+    password = conn.recv(BUFFER_SIZE).decode('utf-8')
+    if not checkPassword(password):
+      break
+    print('Authenticated!')
     while 1:
-        password = conn.recv(BUFFER_SIZE).decode('utf-8')
-        if not checkPassword(password):
-          break
-        print('Authenticated!')
+        print('Waiting for command')
         data = conn.recv(BUFFER_SIZE).decode('utf-8')
-        conn.send(data.encode('utf-8'))  # Echo back
+        if not data:
+          break
+        print('Received command "', data, '"', sep="")
+        output = subprocess.check_output(data.split(" ")).decode('utf-8')
+        conn.send(output.encode('utf-8'))  # Echo back
     conn.close()

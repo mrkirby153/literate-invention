@@ -1,3 +1,5 @@
-TCP_PORT = 5555
-TCP_HOST = "127.0.0.1"
+import os
+
+TCP_PORT = int(os.getenv("PORT", 5555))
+TCP_HOST = os.getenv("IP", "0.0.0.0")
 PASSWORD = "PA$$W0RD"
