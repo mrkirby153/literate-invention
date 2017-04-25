@@ -52,6 +52,6 @@ while 1:
         if not data:
           break
         print('Received command "', data, '"', sep="")
-        output = subprocess.check_output(data.split(" ")).decode('utf-8')
+        output = runCommand(data)
         conn.send(output.encode('utf-8'))  # Echo back
     conn.close()
