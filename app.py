@@ -33,7 +33,11 @@ def checkPassword(password):
 
 def runCommand(command):
   # Run command and capture output
-  output = subprocess.check_output(command.split(" ")).decode('utf-8')
+  output = None
+  try:
+      output = subprocess.check_output(command.split(" "), shell=True).decode('utf-8')
+  except Exception as e:
+      return "An error occurred!"
   if not output:
     return "No Output"
   else:
@@ -49,6 +53,10 @@ while 1:
     while 1:
         print('Waiting for command')
         data = conn.recv(BUFFER_SIZE).decode('utf-8')
+        if data == "shutdown":
+            send('Exiting...')
+            exit(0)
+            break
         if not data:
           break
         print('Received command "', data, '"', sep="")
